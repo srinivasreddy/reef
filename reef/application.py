@@ -78,9 +78,9 @@ class User:
         return [org["id"] for org in response.json().get("users", [])]
 
     def member_team_reports(self, date=None):
-        date = date or (datetime.now() + timedelta(days=-4))
+        date = date or (datetime.now() + timedelta(days=-1))
         start_date = date.strftime("%Y-%m-%d")
-        end_date = (date + timedelta(days=2)).strftime("%Y-%m-%d")
+        end_date = (date + timedelta(days=1)).strftime("%Y-%m-%d")
         _csv = lambda x: ",".join(map(str, x))
         user_ids = self.organization_user_ids()
         cs_user_ids = _csv(user_ids)
@@ -88,9 +88,6 @@ class User:
         cs_org_ids = _csv(org_ids)
         proj_ids = []
         for user_id in user_ids:
-            import pdb
-
-            pdb.set_trace()
             pids = self.project_ids(user_id)
             proj_ids.extend(pids)
         cs_proj_ids = _csv(set(proj_ids))
@@ -109,17 +106,21 @@ class User:
         return response.json()
 
 
+def pivot_table(report):
+    pivot_dict = defaultdict(dict)
+    for organization in report.get("organizations"):
+        for user in organization.get("users"):
+            for date in user.get("dates"):
+                for project in date.get("projects"):
+                    pivot_dict[user["name"]][project["name"]] = project["duration"]
+    return pivot_dict
+
+
 @app.route("/reports", methods=["GET"])
 def reports():
     user = User()
     report = user.member_team_reports()
-    pivot_dict = defaultdict(dict)
-    for users in report.get("organizations", {}).get("users", []):
-        for user in users:
-            for project in user.get("dates")[0].get("projects"):
-                pivot_dict[user["name"]][project["name"]] = project["duration"]
-    print(pivot_dict)
-    # pivot_dict = {"Srini" : {"A":12, "B": 32}, "reddy": {"D":12, "A": 34}}
+    pivot_dict = pivot_table(report)
     data_frame = pd.DataFrame(pivot_dict)
     return render_template_string(data_frame.fillna("").to_html())
 
