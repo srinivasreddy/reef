@@ -152,7 +152,7 @@ def reports():
     return render_template_string(html_data)
 
 
-@app.error_handler(401)
+@app.errorhandler(401)
 def invalid_request(e):
     return e.message, 401
 
