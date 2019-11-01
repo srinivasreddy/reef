@@ -13,7 +13,8 @@ CUSTOM_BY_MEMBER_TEAM_ENDPOINT = API_ENDPOINT + "/custom/by_member/team"
 
 
 TIMEZONE = "Europe/Warsaw"
-APP_TOKEN = os.environ.get("APP_TOKEN", "TAgq83AeDd6PKGu9hoB86JhTkaAkLqU3_tabEQmi3ws")
-FLASK_APP = os.environ.get("FLASK_APP", "application.py")
-EMAIL = os.environ.get("EMAIL", "thatiparthysreenivas@gmail.com")
-PASSWORD = os.environ.get("PASSWORD", "Hubstaff@1434")
+APP_TOKEN = os.environ.get(
+    "HS_APP_TOKEN", "TAgq83AeDd6PKGu9hoB86JhTkaAkLqU3_tabEQmi3ws"
+)
+EMAIL = os.environ.get("HS_EMAIL", "thatiparthysreenivas@gmail.com")
+PASSWORD = os.environ.get("HS_PASSWORD", "qqHubstaff@1434")
