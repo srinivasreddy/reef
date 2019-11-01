@@ -4,11 +4,15 @@ import os
 import pandas as pd
 import requests
 from flask import Flask, abort, render_template, render_template_string, request
-
+from werkzeug.exceptions import BadRequest
 from . import settings
 
 
 app = Flask(__name__)
+
+
+class InvalidEmailPassword(BadRequest):
+    pass
 
 
 class User:
@@ -34,7 +38,7 @@ class User:
             settings.AUTH_ENDPOINT, params=params, headers={"App-Token": self.app_token}
         )
         if response.status_code == 401:
-            return render_template("invalid_email_or_pwd.html")
+            raise InvalidEmailPassword()
         elif response.status_code in (403, 404, 429):
             abort(response.status_code)
         return response.json()["user"]["auth_token"]
@@ -134,7 +138,9 @@ def reports():
         try:
             date = datetime.strptime(date, "%Y-%m-%d")
         except ValueError as e:
-            abort(ValueError)
+            raise ValueError(
+                "<h3>date querystring value is invalid. Please enter a valid parsable querystring in the format: yyyy-mm-dd.</h3>"
+            )
     report = user.member_team_reports(date)
     pivot_dict = pivot_table(report)
     data_frame = pd.DataFrame(pivot_dict)
@@ -146,29 +152,36 @@ def reports():
     return render_template_string(html_data)
 
 
-@app.errorhandler(401)
 def invalid_email_password(e):
-    return render_template("401.html"), 401
+    return render_template("401.html", message=e.message), 401
 
 
 @app.errorhandler(ValueError)
-def invalid_query_string(e):
-    return render_template("valueerror.html"), 400
+def generic_error(e):
+    return e.message, 400
+
+
+@app.errorhandler(InvalidEmailPassword)
+def invalid_email_password(e):
+    return "<h3> Invalid email and/or password.</h3>", 401
 
 
 @app.errorhandler(403)
 def api_access_only_for_active_org(e):
-    return render_template("403.html"), 403
+    return "<h3>API access is only for organizations on an active plan.</h3>", 403
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template("404.html"), 404
+    return "<h3>Could not find record you are looking for.</h3>", 404
 
 
 @app.errorhandler(429)
 def rate_limit_exceeded(e):
-    return render_template("429.html"), 429
+    return (
+        "<h3>Rate limit has been reached. Please wait before making your next request.</h3>",
+        429,
+    )
 
 
 if __name__ == "__main__":

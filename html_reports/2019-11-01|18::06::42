@@ -1,0 +1,18 @@
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Srinivas Reddy Thatiparthy</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ProjectA</th>
+      <td>3600</td>
+    </tr>
+    <tr>
+      <th>hubstaff bot50</th>
+      <td>3600</td>
+    </tr>
+  </tbody>
+</table>
