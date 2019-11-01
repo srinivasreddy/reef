@@ -10,7 +10,7 @@ USERS_ENDPOINT = API_ENDPOINT + "/users"
 PROJECTS_ENDPOINT = API_ENDPOINT + "/users/{id}/projects"
 ORG_MEMBERS_ENDPOINT = API_ENDPOINT + "/organizations/{id}/members"
 CUSTOM_BY_MEMBER_TEAM_ENDPOINT = API_ENDPOINT + "/custom/by_member/team"
-
+FOLDER_NAME = "html_reports"
 
 TIMEZONE = "Europe/Warsaw"
 APP_TOKEN = os.environ.get(

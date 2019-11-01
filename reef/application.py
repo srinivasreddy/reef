@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
-
+import os
 import pandas as pd
 import requests
 from flask import Flask, abort, render_template, render_template_string, request
@@ -140,7 +140,8 @@ def reports():
     data_frame = pd.DataFrame(pivot_dict)
     file_name = datetime.now().strftime("%Y-%m-%d|%H::%M::%S")
     html_data = data_frame.fillna("").to_html()
-    with open(file_name, "w") as fd:
+    path = os.path.join(".", settings.FOLDER_NAME, file_name)
+    with open(path, "w") as fd:
         fd.write(html_data)
     return render_template_string(html_data)
 
