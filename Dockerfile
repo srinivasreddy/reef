@@ -1,11 +1,12 @@
 FROM  python:3.7-slim-buster
+LABEL maintainer="Srinivas Reddy Thatiparthy<thatiparthysreenivas@gmail.com>"
 WORKDIR  /reef
-COPY .  .
+COPY Pipfile.lock   /reef/Pipfile.lock
+COPY . .
 EXPOSE 5000:5000
-ENV APP_TOKEN TAgq83AeDd6PKGu9hoB86JhTkaAkLqU3_tabEQmi3ws
 ENV FLASK_APP  reef/application.py
-ENV EMAIL  "thatiparthysreenivas@gmail.com",
-ENV PASSWORD  "Hubstaff@1434"
-ENTRYPOINT ["/reef"]
-RUN pip install -r requirements.txt
-CMD ["flask run"]
+RUN pip install pipenv virtualenv
+RUN virtualenv -p python3 flask && pipenv sync
+ENV PATH=/root/.virtualenvs/bin:$PATH
+ENTRYPOINT ["python"]
+CMD ["reef/application.py"]
