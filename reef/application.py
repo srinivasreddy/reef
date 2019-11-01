@@ -152,8 +152,9 @@ def reports():
     return render_template_string(html_data)
 
 
-def invalid_email_password(e):
-    return render_template("401.html", message=e.message), 401
+@app.error_handler(401)
+def invalid_request(e):
+    return e.message, 401
 
 
 @app.errorhandler(ValueError)
