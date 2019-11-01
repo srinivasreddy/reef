@@ -17,4 +17,4 @@ APP_TOKEN = os.environ.get(
     "HS_APP_TOKEN", "TAgq83AeDd6PKGu9hoB86JhTkaAkLqU3_tabEQmi3ws"
 )
 EMAIL = os.environ.get("HS_EMAIL", "thatiparthysreenivas@gmail.com")
-PASSWORD = os.environ.get("HS_PASSWORD", "qqHubstaff@1434")
+PASSWORD = os.environ.get("HS_PASSWORD", "Hubstaff@1434")
