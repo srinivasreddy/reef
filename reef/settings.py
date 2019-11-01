@@ -2,6 +2,7 @@
 
 import os
 
+
 API_ENDPOINT = "https://api.hubstaff.com/v1"
 AUTH_ENDPOINT = API_ENDPOINT + "/auth"
 ORGS_ENDPOINT = API_ENDPOINT + "/organizations"
