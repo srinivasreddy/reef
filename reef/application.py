@@ -1,10 +1,12 @@
+import os
 from collections import defaultdict
 from datetime import datetime, timedelta
-import os
+
 import pandas as pd
 import requests
-from flask import Flask, abort, render_template, render_template_string, request
+from flask import Flask, abort, render_template_string, request
 from werkzeug.exceptions import BadRequest
+
 from . import settings
 
 
@@ -12,6 +14,10 @@ app = Flask(__name__)
 
 
 class InvalidEmailPassword(BadRequest):
+    pass
+
+
+class UnAuthorized(BadRequest):
     pass
 
 
@@ -38,7 +44,7 @@ class User:
             settings.AUTH_ENDPOINT, params=params, headers={"App-Token": self.app_token}
         )
         if response.status_code == 401:
-            raise InvalidEmailPassword()
+            raise InvalidEmailPassword("<h3> Invalid email and/or password.</h3>")
         elif response.status_code in (403, 404, 429):
             abort(response.status_code)
         return response.json()["user"]["auth_token"]
@@ -55,7 +61,9 @@ class User:
             settings.ORGS_ENDPOINT,
             headers={"App-Token": settings.APP_TOKEN, "Auth-Token": self.auth_token},
         )
-        if response.status_code in (401, 403, 404, 429):
+        if response.status_code == 401:
+            raise UnAuthorized("<h3>Unauthorized</h3>")
+        elif response.status_code in (403, 404, 429):
             abort(response.status_code)
         return [org["id"] for org in response.json().get("organizations")]
 
@@ -68,7 +76,9 @@ class User:
             settings.PROJECTS_ENDPOINT.format(id=user_id),
             headers={"App-Token": settings.APP_TOKEN, "Auth-Token": self.auth_token},
         )
-        if response.status_code in (401, 403, 404, 429):
+        if response.status_code == 401:
+            raise UnAuthorized("<h3>Unauthorized</h3>")
+        elif response.status_code in (403, 404, 429):
             abort(response.status_code)
         return [org["id"] for org in response.json().get("projects")]
 
@@ -85,7 +95,9 @@ class User:
             params={"include_removed": False},
             headers={"App-Token": settings.APP_TOKEN, "Auth-Token": self.auth_token},
         )
-        if response.status_code in (401, 403, 404, 429):
+        if response.status_code == 401:
+            raise UnAuthorized("<h3>Unauthorized</h3>")
+        elif response.status_code in (403, 404, 429):
             abort(response.status_code)
         return [org["id"] for org in response.json().get("users", [])]
 
@@ -112,7 +124,9 @@ class User:
             },
             headers={"App-Token": settings.APP_TOKEN, "Auth-Token": self.auth_token},
         )
-        if response.status_code in (401, 403, 404, 429):
+        if response.status_code == 401:
+            raise UnAuthorized("<h3>Unauthorized</h3>")
+        elif response.status_code in (403, 404, 429):
             abort(response.status_code)
         return response.json()
 
@@ -154,17 +168,18 @@ def reports():
 
 @app.errorhandler(401)
 def invalid_request(e):
-    return e.message, 401
+    return str(e), 401
 
 
 @app.errorhandler(ValueError)
 def generic_error(e):
-    return e.message, 400
+    return str(e), 400
 
 
+@app.errorhandler(UnAuthorized)
 @app.errorhandler(InvalidEmailPassword)
-def invalid_email_password(e):
-    return "<h3> Invalid email and/or password.</h3>", 401
+def bad_request(e):
+    return str(e), 401
 
 
 @app.errorhandler(403)
