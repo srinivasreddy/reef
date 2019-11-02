@@ -1,6 +1,5 @@
 from setuptools import find_packages, setup
 
-
 setup(
     name="reef",
     version="0.0.1",
@@ -12,6 +11,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=["flask", "requests"],
-    extras_require={"test": ["pytest", "coverage"]},
+    install_requires=["Flask==1.1.1", "pandas==0.25.2", "requests==2.22.0"],
 )
