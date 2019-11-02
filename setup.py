@@ -5,7 +5,7 @@ with open("requirements.txt") as fd:
 
 setup(
     name="reef",
-    version="0.0.2",
+    version="0.0.3",
     url="https://srinivasreddy.dev",
     license="BSD",
     maintainer="Srinivas Reddy Thatiparthy",
